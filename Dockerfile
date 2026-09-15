@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend code
 COPY backend /app
 COPY data /app/data
+COPY data/seed_works.csv /data/seed_works.csv
 
 # Create upload directories
 RUN mkdir -p /data/uploads/photos /data/uploads/voice /data/uploads/notes
