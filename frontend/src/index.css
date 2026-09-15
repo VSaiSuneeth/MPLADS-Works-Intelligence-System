@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-100 text-slate-900 font-sans antialiased;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .gov-card {
+    @apply bg-white border border-gray-300 rounded-sm shadow-sm;
+  }
+
+  .gov-table {
+    @apply w-full text-left border-collapse;
+  }
+
+  .gov-table th {
+    @apply bg-slate-50 text-slate-800 font-bold uppercase tracking-wider text-[11px] px-3 py-2.5 border-b border-gray-300;
+  }
+
+  .gov-table td {
+    @apply px-3 py-3 border-b border-gray-200 text-xs;
+  }
+
+  .gov-input {
+    @apply w-full bg-white border border-gray-300 rounded-sm px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-[#0B3D6E] focus:ring-1 focus:ring-[#0B3D6E] transition;
+  }
+
+  .gov-btn-primary {
+    @apply bg-[#0B3D6E] hover:bg-[#0A2540] text-white font-bold rounded-sm px-4 py-2 transition border border-[#0A2540] shadow-sm active:translate-y-0.5;
+  }
+
+  .gov-btn-secondary {
+    @apply bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-sm px-4 py-2 transition border border-gray-300 shadow-sm;
+  }
+}

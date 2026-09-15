@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL 16 with pgvector extension
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: memory_vault_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: memory_vault
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d memory_vault"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: memory_vault_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 3. FastAPI Backend API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: memory_vault_api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgrespassword@db:5432/memory_vault
+      REDIS_URL: redis://redis:6379/0
+      UPLOAD_DIR: /data/uploads
+      CLIP_MODEL_NAME: clip-ViT-B-32
+      WHISPER_MODEL_SIZE: base
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads_data:/data/uploads
+
+  # 4. RQ Background Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: memory_vault_worker
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgrespassword@db:5432/memory_vault
+      REDIS_URL: redis://redis:6379/0
+      UPLOAD_DIR: /data/uploads
+      CLIP_MODEL_NAME: clip-ViT-B-32
+      WHISPER_MODEL_SIZE: base
+    volumes:
+      - uploads_data:/data/uploads
+
+  # 5. React Web Frontend (Nginx)
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: memory_vault_web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+
+volumes:
+  pgdata:
+  uploads_data:
