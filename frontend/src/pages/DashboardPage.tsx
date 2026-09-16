@@ -29,7 +29,7 @@ export const DashboardPage: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="h-24 bg-white border border-gray-300 rounded-sm animate-pulse"></div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-20 bg-white border border-gray-300 rounded-sm animate-pulse"></div>
           ))}
@@ -78,7 +78,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="gov-card p-4 flex items-center space-x-3">
           <div className="w-10 h-10 rounded-sm bg-blue-50 border border-blue-200 flex items-center justify-center text-[#0B3D6E] shrink-0">
             <FileSpreadsheet className="w-5 h-5" />

@@ -107,7 +107,7 @@ export const CsvUploader: React.FC<CsvUploaderProps> = ({ onSuccess }) => {
             <CheckCircle2 className="w-4 h-4 text-emerald-700" />
             <span className="uppercase tracking-wide">Data Ingestion Run Complete</span>
           </div>
-          <div className="grid grid-cols-3 gap-2 font-mono text-[11px] pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px] pt-1">
             <div className="bg-white p-2 border border-emerald-200 rounded-xs">
               <span className="text-slate-500 block text-[9px]">TOTAL ROWS</span>
               <strong className="text-slate-900">{report.totalRows}</strong>

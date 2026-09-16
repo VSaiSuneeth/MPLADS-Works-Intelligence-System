@@ -432,7 +432,7 @@ export const CasesPage: React.FC = () => {
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                 Record Officer Action / Inquiry Response
               </h3>
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <label className="text-slate-700 font-bold block mb-1 uppercase tracking-wider text-[10px]">Action Type</label>
                   <select

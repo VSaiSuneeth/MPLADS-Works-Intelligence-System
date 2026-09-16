@@ -1,8 +1,12 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, Building } from 'lucide-react';
+import { LogOut, Building, Menu } from 'lucide-react';
 
-export const TopBar: React.FC = () => {
+interface TopBarProps {
+  onToggleMobileMenu?: () => void;
+}
+
+export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
   const { user, logout, jurisdictions, selectedJurisdictionId, setSelectedJurisdictionId } = useAuth();
 
   const userRolesText = user && Array.isArray(user.roles) ? user.roles.join(', ') : 'DISTRICT_OFFICER';
@@ -12,23 +16,37 @@ export const TopBar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Emblem & Title */}
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-serif font-bold text-xs">
+          {onToggleMobileMenu && (
+            <button
+              onClick={onToggleMobileMenu}
+              className="md:hidden p-1.5 text-slate-200 hover:text-white hover:bg-blue-900 rounded-xs transition focus:outline-none"
+              title="Toggle Navigation Menu"
+              aria-label="Toggle Navigation Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          )}
+          <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-serif font-bold text-xs shrink-0">
             🇮🇳
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-serif font-bold text-sm tracking-tight text-white">
+              <span className="font-serif font-bold text-sm tracking-tight text-white hidden sm:inline">
                 MPLADS Works Intelligence Engine
               </span>
+              <span className="font-serif font-bold text-sm tracking-tight text-white sm:hidden">
+                MPLADS Engine
+              </span>
               <span className="text-[9px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded-xs font-mono uppercase border border-blue-700">
-                GOV.IN PORTAL
+                GOV.IN
               </span>
             </div>
-            <p className="text-[10px] text-slate-300 font-sans">
+            <p className="text-[10px] text-slate-300 font-sans hidden sm:block">
               Ministry of Statistics & Programme Implementation (MoSPI)
             </p>
           </div>
         </div>
+
 
         {/* User Scope & Persona Switcher */}
         <div className="flex items-center space-x-4">
