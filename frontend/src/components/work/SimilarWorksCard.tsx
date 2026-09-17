@@ -36,10 +36,11 @@ export const SimilarWorksCard: React.FC<SimilarWorksProps> = ({ candidates }) =>
           {candidates.map((cand) => {
             const pct = (cand.similarityScore * 100).toFixed(1);
             const fb = cand.featureBreakdown;
+            const targetWorkId = cand.workId || cand.candidateWorkId;
 
             return (
               <div
-                key={cand.workId}
+                key={targetWorkId || cand.externalId}
                 className="p-4 bg-slate-50 border border-gray-300 rounded-xs space-y-3 text-xs"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-gray-200 pb-2">
@@ -56,12 +57,12 @@ export const SimilarWorksCard: React.FC<SimilarWorksProps> = ({ candidates }) =>
                       </span>
                     </div>
                     <h3 className="font-bold text-slate-900 text-xs mt-1 hover:text-[#0B3D6E] transition">
-                      <Link to={`/works/${cand.workId}`}>{cand.title}</Link>
+                      <Link to={`/works/${targetWorkId}`}>{cand.title}</Link>
                     </h3>
                   </div>
 
                   <Link
-                    to={`/works/${cand.workId}`}
+                    to={`/works/${targetWorkId}`}
                     className="gov-btn-secondary py-1 px-3 text-xs shrink-0 flex items-center gap-1"
                   >
                     <span>Compare Work</span>

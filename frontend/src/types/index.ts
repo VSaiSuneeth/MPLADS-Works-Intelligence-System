@@ -126,6 +126,7 @@ export interface EvidenceItem {
 
 export interface SimilarityCandidate {
   workId: string;
+  candidateWorkId?: string;
   externalId: string;
   title: string;
   category?: string;

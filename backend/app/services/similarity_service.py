@@ -149,6 +149,7 @@ class SimilarityService:
             items.append({
                 "candidateId": c.id,
                 "candidateWorkId": cand_work.id,
+                "workId": cand_work.id,
                 "externalId": cand_work.external_id,
                 "title": cand_work.title,
                 "category": cand_work.category,
