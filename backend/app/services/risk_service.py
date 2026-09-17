@@ -7,6 +7,7 @@ from sqlalchemy import desc, or_
 from app.models.work import Work
 from app.models.risk import RiskScore, RiskSignal
 from app.services.rule_engine import RuleEngine, RuleResult
+from app.services.ml_anomaly_service import MLAnomalyService
 
 class RiskService:
     @staticmethod
@@ -34,7 +35,12 @@ class RiskService:
         return peer_stats
 
     @staticmethod
-    def compute_work_risk(work: Work, db: Session, peer_stats: Optional[Dict[str, Any]] = None) -> Tuple[float, float, str, List[Dict[str, Any]]]:
+    def compute_work_risk(
+        work: Work,
+        db: Session,
+        peer_stats: Optional[Dict[str, Any]] = None,
+        ml_predictions: Optional[Dict[str, Any]] = None
+    ) -> Tuple[float, float, str, List[Dict[str, Any]]]:
         # 1. Evaluate Deterministic Rules
         rule_results = RuleEngine.evaluate_work(work, db)
         signals: List[Dict[str, Any]] = []
@@ -87,6 +93,12 @@ class RiskService:
                     "recommendedAction": "Compare cost estimate breakdown against standard PWD rate schedule."
                 })
 
+        # 3. Evaluate ML Anomaly Signal (ML-ANOMALY-001)
+        ml_signal = MLAnomalyService.get_ml_signal_for_work(work, db, ml_predictions)
+        if ml_signal:
+            total_score += ml_signal["contribution"]
+            signals.append(ml_signal)
+
         # Cap score at 100
         final_score = min(100.0, round(total_score, 1))
 
@@ -118,9 +130,10 @@ class RiskService:
     def calculate_and_save_all_risks(db: Session):
         peer_stats = RiskService.calculate_peer_cost_anomalies(db)
         works = db.query(Work).all()
+        ml_predictions = MLAnomalyService.evaluate_all_works(db, works)
 
         for w in works:
-            score, confidence, priority, signals = RiskService.compute_work_risk(w, db, peer_stats)
+            score, confidence, priority, signals = RiskService.compute_work_risk(w, db, peer_stats, ml_predictions)
             
             # Save or update RiskScore
             risk_score = db.query(RiskScore).filter(RiskScore.work_id == w.id).first()
@@ -233,6 +246,8 @@ class RiskService:
                 "locationText": w.location_text,
                 "stage": w.current_status,
                 "sanctionAmount": float(w.sanction_amount) if w.sanction_amount else None,
+                "latitude": float(w.latitude) if w.latitude is not None else None,
+                "longitude": float(w.longitude) if w.longitude is not None else None,
                 "score": float(rs.score),
                 "priority": rs.priority,
                 "confidence": float(rs.confidence),

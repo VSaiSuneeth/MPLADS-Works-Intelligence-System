@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { TopRiskWorksCard } from '../components/dashboard/TopRiskWorksCard';
+import { GeospatialMapCard } from '../components/dashboard/GeospatialMapCard';
 import {
   FileSpreadsheet,
   FolderGit2,
@@ -127,6 +128,9 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Geospatial Risk Distribution Map */}
+      <GeospatialMapCard works={topRiskCandidates} />
 
       {/* Priority Breakdown & Risk Queue Top Candidates */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

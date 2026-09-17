@@ -11,12 +11,27 @@ from app.auth.dependencies import get_current_token_payload, TokenPayload, Requi
 from app.services.work_service import WorkService
 from app.services.evidence_fraud_service import EvidenceFraudService
 from app.services.audit_service import AuditService
+from app.services.agency_concentration_service import AgencyConcentrationService
 from app.core.storage import storage_backend
 from app.schemas.work import PaginatedWorkResponse, WorkDetailOut, LifecycleEventOut, EvidenceOut, DataQualityFindingOut, FraudFlagOut
 from app.models.work import Work, Evidence, EvidenceFraudFlag
 from app.models.ingestion import DataQualityFinding
 
 router = APIRouter(prefix="/works", tags=["Works Management"])
+
+@router.get("/analytics/agencies")
+def get_agency_concentration_analytics(
+    jurisdictionId: Optional[str] = Query(None),
+    payload: TokenPayload = Depends(get_current_token_payload),
+    db: Session = Depends(get_db)
+):
+    """Returns lightweight agency and contractor allocation concentration analysis."""
+    authorized_jurisdictions = payload.jurisdictions if "ADMIN" not in payload.roles else ["ALL"]
+    return AgencyConcentrationService.get_agency_concentration_analysis(
+        db=db,
+        authorized_jurisdiction_ids=authorized_jurisdictions,
+        jurisdiction_id=jurisdictionId
+    )
 
 @router.get("", response_model=PaginatedWorkResponse)
 def list_works(

@@ -81,6 +81,8 @@ class DashboardService:
                 "category": w.category,
                 "stage": w.current_status,
                 "sanctionAmount": float(w.sanction_amount) if w.sanction_amount else None,
+                "latitude": float(w.latitude) if w.latitude is not None else None,
+                "longitude": float(w.longitude) if w.longitude is not None else None,
                 "score": float(r.score),
                 "priority": r.priority,
                 "confidence": float(r.confidence),
