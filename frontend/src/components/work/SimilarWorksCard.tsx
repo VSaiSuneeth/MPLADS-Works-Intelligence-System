@@ -34,7 +34,9 @@ export const SimilarWorksCard: React.FC<SimilarWorksProps> = ({ candidates }) =>
       ) : (
         <div className="space-y-4">
           {candidates.map((cand) => {
-            const pct = (cand.similarityScore * 100).toFixed(1);
+            // The API contract is a percentage in the 0–100 range. Feature
+            // breakdown values use that same range, so do not scale again here.
+            const pct = cand.similarityScore.toFixed(1);
             const fb = cand.featureBreakdown;
             const targetWorkId = cand.workId || cand.candidateWorkId;
 

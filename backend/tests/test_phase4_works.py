@@ -76,6 +76,35 @@ def test_work_detail_and_timeline():
     assert any(t["eventType"] == "RECOMMENDATION" for t in timeline)
     assert any(t["eventType"] == "SANCTION" for t in timeline)
 
+def test_seeded_evidence_is_served_from_backend_and_timeline_does_not_invent_dates():
+    db = SessionLocal()
+    try:
+        w = db.query(Work).filter(Work.external_id == "W-1005").first()
+        assert w is not None
+        work_id = w.id
+    finally:
+        db.close()
+
+    headers = get_auth_header("district.officer")
+    evidence_response = client.get(f"/api/v1/works/{work_id}/evidence", headers=headers)
+    assert evidence_response.status_code == 200
+    evidence = next(item for item in evidence_response.json() if item["fileName"] == "light_poles.jpg")
+    assert evidence["availabilityStatus"] == "AVAILABLE"
+    assert evidence["sourceUrl"].startswith(f"/api/v1/works/{work_id}/evidence/")
+
+    file_response = client.get(evidence["sourceUrl"])
+    assert file_response.status_code == 200
+    assert file_response.headers["content-type"].startswith("image/jpeg")
+    assert file_response.content
+
+    timeline_response = client.get(f"/api/v1/works/{work_id}/timeline", headers=headers)
+    assert timeline_response.status_code == 200
+    timeline = timeline_response.json()
+    payment = next(item for item in timeline if item["eventType"] == "PAYMENT_DISBURSED")
+    progress = next(item for item in timeline if item["eventType"] == "PROGRESS_UPDATE")
+    assert payment["eventDate"] is None and payment["isMissing"] is True
+    assert progress["eventDate"] is None and progress["isMissing"] is True
+
 def test_jurisdiction_scope_isolation():
     # Delhi officer tries to query Lucknow works directly by ID
     db = SessionLocal()

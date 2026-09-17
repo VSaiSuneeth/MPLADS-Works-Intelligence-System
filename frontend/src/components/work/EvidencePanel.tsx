@@ -10,6 +10,11 @@ interface EvidencePanelProps {
   onEvidenceUploaded?: () => void;
 }
 
+const resolveEvidenceUrl = (sourceUrl?: string) => {
+  if (!sourceUrl || !sourceUrl.startsWith('/')) return sourceUrl;
+  return `${import.meta.env.VITE_API_URL}${sourceUrl}`;
+};
+
 export const EvidencePanel: React.FC<EvidencePanelProps> = ({
   workId,
   evidenceList,
@@ -45,8 +50,9 @@ export const EvidencePanel: React.FC<EvidencePanelProps> = ({
 
   const handleDownload = (item: EvidenceItem, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (item.sourceUrl) {
-      window.open(item.sourceUrl, '_blank');
+    const evidenceUrl = resolveEvidenceUrl(item.sourceUrl);
+    if (evidenceUrl) {
+      window.open(evidenceUrl, '_blank');
       return;
     }
     const content = `MPLADS OFFICIAL EVIDENCE ARTIFACT RECORD
@@ -147,6 +153,7 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
             const Icon = isImage ? Image : FileText;
             const flags = item.fraudFlags || [];
             const hasFraud = flags.length > 0;
+            const evidenceUrl = resolveEvidenceUrl(item.sourceUrl);
             const highestSeverity = flags.find(f => f.severity === 'CRITICAL') ? 'CRITICAL' : flags.find(f => f.severity === 'HIGH') ? 'HIGH' : flags.find(f => f.severity === 'MEDIUM') ? 'MEDIUM' : 'LOW';
 
             return (
@@ -163,8 +170,8 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start space-x-3">
                     <div className="w-12 h-12 rounded-xs bg-slate-100 border border-slate-300 flex items-center justify-center shrink-0 overflow-hidden relative">
-                      {isImage && item.sourceUrl ? (
-                        <img src={item.sourceUrl} alt={fileName} className="w-full h-full object-cover" />
+                      {isImage && evidenceUrl ? (
+                        <img src={evidenceUrl} alt={fileName} className="w-full h-full object-cover" />
                       ) : (
                         <Icon className="w-6 h-6 text-slate-600" />
                       )}
@@ -296,9 +303,9 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
             </div>
 
             <div className="bg-slate-950 p-4 rounded-xs border border-slate-800 flex flex-col items-center justify-center space-y-3 relative">
-              {selectedArtifact.sourceUrl ? (
+              {resolveEvidenceUrl(selectedArtifact.sourceUrl) ? (
                 <img
-                  src={selectedArtifact.sourceUrl}
+                  src={resolveEvidenceUrl(selectedArtifact.sourceUrl)}
                   alt={selectedArtifact.fileName}
                   className="max-h-[350px] object-contain rounded border border-slate-700"
                 />

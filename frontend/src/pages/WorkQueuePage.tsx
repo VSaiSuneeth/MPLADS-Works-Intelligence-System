@@ -36,12 +36,13 @@ export const WorkQueuePage: React.FC = () => {
   const { data, isLoading, error, refetch } = useQuery<RiskQueueResponse>({
     queryKey: ['risk-queue', selectedJurisdictionId, priority, stage, category, search, page],
     queryFn: async () => {
-      let url = `/risk/queue?page=${page}&pageSize=25`;
-      if (selectedJurisdictionId) url += `&jurisdictionId=${selectedJurisdictionId}`;
-      if (priority && priority !== 'ALL') url += `&priority=${priority}`;
-      if (stage) url += `&stage=${stage}`;
-      if (category) url += `&category=${category}`;
-      if (search) url += `&search=${encodeURIComponent(search)}`;
+      const params = new URLSearchParams({ page: String(page), pageSize: '25' });
+      if (selectedJurisdictionId) params.set('jurisdictionId', selectedJurisdictionId);
+      if (priority && priority !== 'ALL') params.set('priority', priority);
+      if (stage) params.set('stage', stage);
+      if (category) params.set('category', category);
+      if (search) params.set('search', search);
+      const url = `/risk/queue?${params.toString()}`;
 
       const res = await apiClient.get<RiskQueueResponse>(url);
       return res.data;

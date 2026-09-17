@@ -162,7 +162,9 @@ class IngestionService:
                     db.add(ProgressRecord(
                         work_id=work.id,
                         progress_percent=prog_val,
-                        reported_date=comp_date or sanc_date or datetime.now(timezone.utc).date(),
+                        # The source feed has no progress-report date. Do not
+                        # fabricate one from sanction/completion dates.
+                        reported_date=None,
                         status_text=f"Reported progress {prog_val}%",
                         source_id=data_source.id
                     ))
@@ -172,7 +174,10 @@ class IngestionService:
                     db.add(Payment(
                         work_id=work.id,
                         payment_reference=f"PAY-{ext_id}-01",
-                        payment_date=sanc_date or datetime.now(timezone.utc).date(),
+                        # The source feed has no payment date. Keep this
+                        # unrecorded rather than representing it as the
+                        # sanction date in the lifecycle timeline.
+                        payment_date=None,
                         amount=exp_amt,
                         payee_name=agency_name or "Executing Agency",
                         source_id=data_source.id
@@ -186,10 +191,10 @@ class IngestionService:
                         work_id=work.id,
                         evidence_type=row.get("evidence_type", "PHOTOGRAPH").strip(),
                         file_name=ev_file,
-                        storage_key=f"uploads/{ev_file}",
-                        source_url=f"/static/evidence/{ev_file}",
+                        storage_key=None,
+                        source_url=None,
                         metadata_json={"hasCompletionCertificate": has_cert},
-                        availability_status="AVAILABLE"
+                        availability_status="METADATA_ONLY"
                     ))
 
                 # DQ Check 1: Missing Mandatory Agency

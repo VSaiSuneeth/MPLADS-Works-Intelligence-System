@@ -39,6 +39,18 @@ def test_risk_queue_authenticated():
     scores = [item["score"] for item in data["items"]]
     assert scores == sorted(scores, reverse=True)
 
+def test_risk_queue_category_filter_accepts_encoded_ampersand_category():
+    headers = get_auth_header("district.officer")
+    res = client.get(
+        "/api/v1/risk/queue",
+        params={"category": "Water Supply & Sanitation"},
+        headers=headers,
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total"] >= 2
+    assert all(item["category"] == "Water Supply & Sanitation" for item in data["items"])
+
 def test_work_risk_detail_explanation():
     db = SessionLocal()
     try:

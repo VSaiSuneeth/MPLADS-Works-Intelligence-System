@@ -49,6 +49,8 @@ def test_seeded_duplicate_borewell_pair():
 
     match = next(c for c in data["candidates"] if c["candidateWorkId"] == w1002_id)
     assert match["similarityScore"] >= 70.0
+    assert match["similarityScore"] <= 100.0
+    assert match["workId"] == w1002_id
     assert "featureBreakdown" in match
     assert match["featureBreakdown"]["geoProximity"] >= 90.0
 

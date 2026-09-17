@@ -24,7 +24,7 @@ class LifecycleEventOut(BaseModel):
     status: Optional[str] = None
     amount: Optional[float] = None
     description: Optional[str] = None
-    isMissing: bool = False
+    isMissing: bool = Field(False, validation_alias="is_missing")
 
     model_config = ConfigDict(from_attributes=True)
 

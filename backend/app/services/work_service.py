@@ -1,4 +1,5 @@
 from typing import List, Optional, Tuple, Dict, Any
+from datetime import date
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, and_, desc, asc
 
@@ -215,10 +216,10 @@ class WorkService:
             timeline.append({
                 "id": f"agency-{w.id}",
                 "event_type": "AGENCY_ASSIGNMENT",
-                "event_date": w.sanction_date,
-                "status": "ASSIGNED",
-                "description": f"Executing Agency assigned: {w.agency.name}",
-                "is_missing": False
+                "event_date": None,
+                "status": "DATE_UNRECORDED",
+                "description": f"Executing Agency assigned: {w.agency.name}. Assignment date not available in source system.",
+                "is_missing": True
             })
 
         # 4. Progress Update Events
@@ -227,9 +228,9 @@ class WorkService:
                 "id": f"prg-{prg.id}",
                 "event_type": "PROGRESS_UPDATE",
                 "event_date": prg.reported_date,
-                "status": f"{prg.progress_percent}% Physical Progress",
-                "description": prg.status_text or f"Physical progress reported at {prg.progress_percent}%.",
-                "is_missing": False
+                "status": f"{prg.progress_percent}% Physical Progress" if prg.reported_date else "DATE_UNRECORDED",
+                "description": (prg.status_text or f"Physical progress reported at {prg.progress_percent}%.") + (" Report date not available in source system." if not prg.reported_date else ""),
+                "is_missing": prg.reported_date is None
             })
 
         # 5. Payment Events
@@ -238,10 +239,10 @@ class WorkService:
                 "id": f"pay-{pay.id}",
                 "event_type": "PAYMENT_DISBURSED",
                 "event_date": pay.payment_date,
-                "status": getattr(pay, 'payment_status', 'DISBURSED'),
+                "status": getattr(pay, 'payment_status', 'DISBURSED') if pay.payment_date else "DATE_UNRECORDED",
                 "amount": float(pay.amount),
                 "description": f"Disbursement of ₹{pay.amount:,.2f} recorded (Ref: {pay.payment_reference}).",
-                "is_missing": False
+                "is_missing": pay.payment_date is None
             })
 
         # 6. Completion Event

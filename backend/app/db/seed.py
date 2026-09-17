@@ -19,6 +19,7 @@ def seed_demo_evidence(db):
     w1001 = db.query(Work).filter(Work.external_id == "W-1001").first()
     w1009 = db.query(Work).filter(Work.external_id == "W-1009").first()
     w1002 = db.query(Work).filter(Work.external_id == "W-1002").first()
+    w1005 = db.query(Work).filter(Work.external_id == "W-1005").first()
 
     if not w1001 or not w1009:
         print("Works W-1001 / W-1009 not found for evidence fraud seeding.")
@@ -45,6 +46,35 @@ def seed_demo_evidence(db):
         exif_bytes = piexif.dump(exif_dict)
         img.save(buf, format="JPEG", exif=exif_bytes)
         return buf.getvalue()
+
+    # The controlled CSV identifies this artifact, so seed its actual bytes
+    # into the same storage backend used for uploaded evidence. This makes the
+    # demo record honest: it is only marked AVAILABLE once a file exists.
+    if w1005:
+        light_poles = make_exif_jpeg(
+            lat=28.7245,
+            lon=77.1704,
+            date_str="2023:07:15 10:30:00",
+            camera="Demo Site Camera",
+            color=(245, 180, 50),
+        )
+        w1005_evidence = db.query(Evidence).filter(
+            Evidence.work_id == w1005.id,
+            Evidence.file_name == "light_poles.jpg",
+        ).first()
+        if w1005_evidence:
+            stored_path = storage_backend.save_file(
+                io.BytesIO(light_poles), "light_poles.jpg", subfolder="evidence"
+            )
+            w1005_evidence.storage_key = stored_path
+            w1005_evidence.source_url = f"/api/v1/works/{w1005.id}/evidence/{w1005_evidence.id}/file"
+            w1005_evidence.availability_status = "AVAILABLE"
+            db.commit()
+            EvidenceFraudService.process_uploaded_evidence(
+                w1005_evidence,
+                storage_backend.get_full_path(stored_path),
+                db,
+            )
 
     # 1. Delhi Borewell Original Photo (W-1001)
     delhi_jpeg = make_exif_jpeg(lat=28.8521, lon=77.0934, date_str="2024:05:15 10:30:00", camera="iPhone 15 Pro", color=(120, 180, 220))
