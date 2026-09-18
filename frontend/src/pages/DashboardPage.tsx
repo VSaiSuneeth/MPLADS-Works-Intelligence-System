@@ -51,6 +51,7 @@ export const DashboardPage: React.FC = () => {
   const totals = data.totals || { totalWorks: 0, openCases: 0, executionWorks: 0, completedWorks: 0 };
   const riskDistribution = data.riskDistribution || { critical: 0, high: 0, medium: 0, low: 0 };
   const topRiskCandidates = data.topRiskWorks || data.top_risk_works || data.topRiskCandidates || [];
+  const mapWorksList = data.mapWorks || data.map_works || topRiskCandidates;
   const dataFreshness = data.dataFreshness || { datasetLabel: 'SYNTHETIC_DEMO' };
 
   return (
@@ -130,7 +131,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Geospatial Risk Distribution Map */}
-      <GeospatialMapCard works={topRiskCandidates} />
+      <GeospatialMapCard works={mapWorksList} />
 
       {/* Priority Breakdown & Risk Queue Top Candidates */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -90,6 +90,25 @@ class DashboardService:
                 "districtName": w.jurisdiction.district_name
             })
 
+        # Map Works Query (All works in scope with coordinates)
+        map_works_all = work_query.filter(Work.latitude.isnot(None), Work.longitude.isnot(None)).all()
+        map_items = []
+        for mw in map_works_all:
+            r = db.query(RiskScore).filter(RiskScore.work_id == mw.id).first()
+            map_items.append({
+                "workId": mw.id,
+                "externalId": mw.external_id,
+                "title": mw.title,
+                "category": mw.category,
+                "stage": mw.current_status,
+                "sanctionAmount": float(mw.sanction_amount) if mw.sanction_amount else None,
+                "latitude": float(mw.latitude) if mw.latitude is not None else None,
+                "longitude": float(mw.longitude) if mw.longitude is not None else None,
+                "score": float(r.score) if r else 0.0,
+                "priority": r.priority if r else "LOW",
+                "districtName": mw.jurisdiction.district_name if mw.jurisdiction else None
+            })
+
         # Data Freshness Metadata
         latest_run = db.query(IngestionRun).order_by(desc(IngestionRun.completed_at)).first()
         last_ingested_str = latest_run.completed_at.isoformat() if (latest_run and latest_run.completed_at) else datetime.now(timezone.utc).isoformat()
@@ -117,5 +136,6 @@ class DashboardService:
                 "executionWorks": execution_works
             },
             "riskDistribution": risk_dist,
-            "topRiskWorks": top_risk_items
+            "topRiskWorks": top_risk_items,
+            "mapWorks": map_items
         }

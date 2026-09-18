@@ -167,8 +167,8 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                     : 'border-gray-300 hover:border-[#0B3D6E]'
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start space-x-3">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="flex items-start space-x-3 min-w-0">
                     <div className="w-12 h-12 rounded-xs bg-slate-100 border border-slate-300 flex items-center justify-center shrink-0 overflow-hidden relative">
                       {isImage && evidenceUrl ? (
                         <img src={evidenceUrl} alt={fileName} className="w-full h-full object-cover" />
@@ -176,20 +176,20 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                         <Icon className="w-6 h-6 text-slate-600" />
                       )}
                     </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-xs font-bold text-slate-900">{fileName}</h3>
-                        <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-300 rounded-xs uppercase">
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-xs font-bold text-slate-900 break-all">{fileName}</h3>
+                        <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 text-slate-700 border border-slate-300 rounded-xs uppercase shrink-0">
                           {item.evidenceType || 'PHOTOGRAPH'}
                         </span>
                         {hasFraud && (
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-xs uppercase border flex items-center gap-1 ${
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-xs uppercase border flex items-center gap-1 shrink-0 ${
                             highestSeverity === 'CRITICAL' ? 'bg-red-700 text-white border-red-800' :
                             highestSeverity === 'HIGH' ? 'bg-red-600 text-white border-red-700' :
                             highestSeverity === 'MEDIUM' ? 'bg-amber-600 text-white border-amber-700' :
                             'bg-blue-600 text-white border-blue-700'
                           }`}>
-                            <AlertOctagon className="w-3 h-3" />
+                            <AlertOctagon className="w-3 h-3 shrink-0" />
                             <span>{highestSeverity} FRAUD ALERT</span>
                           </span>
                         )}
@@ -204,7 +204,7 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                         )}
                         {item.gpsPresent && item.exifLatitude != null ? (
                           <span className="text-emerald-700 font-bold flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-emerald-600 inline" />
+                            <MapPin className="w-3 h-3 text-emerald-600 inline shrink-0" />
                             GPS EXIF: {Number(item.exifLatitude).toFixed(4)}°, {Number(item.exifLongitude).toFixed(4)}°
                           </span>
                         ) : (
@@ -214,7 +214,7 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1.5 shrink-0">
+                  <div className="flex items-center space-x-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
                     <button
                       onClick={() => setSelectedArtifact(item)}
                       className="p-1.5 text-slate-700 hover:text-white hover:bg-[#0B3D6E] bg-slate-100 border border-gray-300 rounded-xs transition flex items-center gap-1 text-[10px] font-bold"
@@ -227,6 +227,7 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                       className="p-1.5 text-slate-700 hover:text-white hover:bg-emerald-700 bg-slate-100 border border-gray-300 rounded-xs transition flex items-center gap-1 text-[10px] font-bold"
                     >
                       <Download className="w-3.5 h-3.5" />
+                      <span>Download</span>
                     </button>
                   </div>
                 </div>
@@ -245,14 +246,14 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                         : 'bg-blue-50 border-blue-300 text-blue-950'
                     }`}
                   >
-                    <div className="flex items-center justify-between font-bold">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between font-bold gap-1.5">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
                         <span className="uppercase tracking-wider">
                           ⚠ CROSS-WORK FRAUD ALERT: {flag.flagType.replace(/_/g, ' ')}
                         </span>
                       </div>
-                      <span className="font-mono text-[11px] bg-white px-2 py-0.5 border rounded-xs">
+                      <span className="font-mono text-[11px] bg-white px-2 py-0.5 border rounded-xs shrink-0 self-start sm:self-auto">
                         CONFIDENCE: {flag.confidenceScore}% | SEVERITY: {flag.severity}
                       </span>
                     </div>
@@ -262,16 +263,16 @@ Uploaded Date : ${item.uploadedAt || 'N/A'}
                     </p>
 
                     {flag.matchedWorkId && (
-                      <div className="pt-1 flex items-center gap-2 text-[11px] font-semibold">
+                      <div className="pt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold">
                         <span>Matched Work:</span>
                         <a
                           href={`/works/${flag.matchedWorkId}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[#0B3D6E] underline hover:text-blue-900 font-mono inline-flex items-center gap-1"
+                          className="text-[#0B3D6E] underline hover:text-blue-900 font-mono inline-flex items-center gap-1 break-all"
                         >
                           <span>{flag.matchedWorkExternalId || flag.matchedWorkId} ({flag.matchedWorkTitle || 'View Work Detail'})</span>
-                          <ExternalLink className="w-3 h-3" />
+                          <ExternalLink className="w-3 h-3 shrink-0" />
                         </a>
                       </div>
                     )}

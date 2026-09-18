@@ -150,6 +150,11 @@ class IngestionService:
                     work.title = title
                     work.description = row.get("description", "").strip()
                     work.category = row.get("category", work.category)
+                    work.location_text = row.get("location_text", work.location_text)
+                    if lat is not None:
+                        work.latitude = lat
+                    if lon is not None:
+                        work.longitude = lon
                     work.estimated_cost = est_cost or work.estimated_cost
                     work.sanction_amount = sanc_amt or work.sanction_amount
                     work.expenditure_amount = exp_amt or work.expenditure_amount

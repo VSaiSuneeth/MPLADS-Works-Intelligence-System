@@ -13,47 +13,46 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobileMenu }) => {
 
   return (
     <header className="bg-[#0A2540] text-white border-b-4 border-b-[#0B3D6E] shadow-sm sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between">
         {/* Emblem & Title */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
           {onToggleMobileMenu && (
             <button
               onClick={onToggleMobileMenu}
-              className="md:hidden p-1.5 text-slate-200 hover:text-white hover:bg-blue-900 rounded-xs transition focus:outline-none"
+              className="md:hidden p-1.5 text-slate-200 hover:text-white hover:bg-blue-900 rounded-xs transition focus:outline-none shrink-0"
               title="Toggle Navigation Menu"
               aria-label="Toggle Navigation Menu"
             >
               <Menu className="w-5 h-5" />
             </button>
           )}
-          <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-serif font-bold text-xs shrink-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 font-serif font-bold text-xs shrink-0">
             🇮🇳
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="font-serif font-bold text-sm tracking-tight text-white hidden sm:inline">
+          <div className="min-w-0">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <span className="font-serif font-bold text-xs sm:text-sm tracking-tight text-white hidden sm:inline truncate">
                 MPLADS Works Intelligence Engine
               </span>
-              <span className="font-serif font-bold text-sm tracking-tight text-white sm:hidden">
+              <span className="font-serif font-bold text-xs sm:text-sm tracking-tight text-white sm:hidden truncate">
                 MPLADS Engine
               </span>
-              <span className="text-[9px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded-xs font-mono uppercase border border-blue-700">
+              <span className="text-[9px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded-xs font-mono uppercase border border-blue-700 shrink-0">
                 GOV.IN
               </span>
             </div>
-            <p className="text-[10px] text-slate-300 font-sans hidden sm:block">
+            <p className="text-[10px] text-slate-300 font-sans hidden sm:block truncate">
               Ministry of Statistics & Programme Implementation (MoSPI)
             </p>
           </div>
         </div>
 
-
-        {/* User Scope & Persona Switcher */}
-        <div className="flex items-center space-x-4">
+        {/* Desktop User Scope & Persona Switcher (Hidden on Mobile) */}
+        <div className="hidden md:flex items-center space-x-4 shrink-0">
           {/* Jurisdiction Dropdown */}
           {Array.isArray(jurisdictions) && jurisdictions.length > 0 && (
             <div className="flex items-center space-x-1.5 text-xs">
-              <Building className="w-3.5 h-3.5 text-blue-300" />
+              <Building className="w-3.5 h-3.5 text-blue-300 shrink-0" />
               <select
                 value={selectedJurisdictionId || ''}
                 onChange={(e) => setSelectedJurisdictionId(e.target.value)}

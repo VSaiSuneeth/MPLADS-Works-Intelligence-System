@@ -92,18 +92,18 @@ export const TopRiskWorksCard: React.FC<TopRiskWorksProps> = ({ works = [] }) =>
 
                 {/* Primary Anomaly Signal */}
                 {w.topSignalLabel && (
-                  <div className="pt-1 flex items-center gap-1.5 text-xs text-amber-900 font-semibold bg-amber-50 border border-amber-200 p-1.5 rounded-sm">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-                    <span className="truncate">{w.topSignalLabel}</span>
+                  <div className="pt-1 flex items-start gap-1.5 text-xs text-amber-900 font-semibold bg-amber-50 border border-amber-200 p-1.5 rounded-sm">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+                    <span className="break-words min-w-0 leading-snug">{w.topSignalLabel}</span>
                   </div>
                 )}
               </div>
 
               {/* Action Link */}
-              <div className="shrink-0 flex items-center gap-2">
+              <div className="shrink-0 flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-gray-200">
                 <Link
                   to={`/works/${w.workId}`}
-                  className="gov-btn-primary py-1.5 text-xs flex items-center gap-1"
+                  className="gov-btn-primary py-1.5 text-xs flex items-center justify-center gap-1 w-full md:w-auto"
                 >
                   <span>Investigate</span>
                   <ArrowRight className="w-3.5 h-3.5" />

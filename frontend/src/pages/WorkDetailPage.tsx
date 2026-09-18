@@ -180,7 +180,7 @@ export const WorkDetailPage: React.FC = () => {
         </div>
 
         {/* Financial & Physical Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <div className="p-3 bg-slate-50 border border-gray-300 rounded-xs space-y-0.5">
             <span className="text-slate-600 text-[10px] uppercase font-bold tracking-wider block">
               Sanction Amount
@@ -220,7 +220,7 @@ export const WorkDetailPage: React.FC = () => {
       </div>
 
       {/* 5 Tabs Header */}
-      <div className="flex items-center space-x-2 border-b border-gray-300 pb-2 overflow-x-auto text-xs font-bold uppercase tracking-wider">
+      <div className="flex items-center space-x-2 border-b border-gray-300 pb-2 overflow-x-auto min-w-0 text-xs font-bold uppercase tracking-wider">
         {[
           { key: 'overview', label: 'Overview' },
           { key: 'signals', label: `Risk Signals (${riskDetail?.signals.length || 0})` },
@@ -244,21 +244,21 @@ export const WorkDetailPage: React.FC = () => {
 
       {/* Top Fraud Warning Badge if Evidence has Fraud Flags */}
       {evidenceList.some((e: any) => e.fraudFlags && e.fraudFlags.length > 0) && (
-        <div className="p-4 bg-red-600 text-white rounded-xs shadow-md flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="p-4 bg-red-600 text-white rounded-xs shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-3 min-w-0">
             <AlertTriangle className="w-6 h-6 shrink-0 text-white animate-pulse" />
-            <div>
+            <div className="min-w-0">
               <h3 className="text-xs font-bold uppercase tracking-wider">
                 ⚠ CROSS-WORK EVIDENCE FRAUD DETECTED FOR THIS WORK
               </h3>
-              <p className="text-[11px] text-red-100 font-medium">
+              <p className="text-[11px] text-red-100 font-medium leading-normal">
                 Photo evidence uploaded for this work matches identical bytes, perceptual pHash, or EXIF geotags of works in another district.
               </p>
             </div>
           </div>
           <button
             onClick={() => setActiveTab('evidence')}
-            className="px-3 py-1 bg-white text-red-700 hover:bg-red-50 text-xs font-bold rounded-xs shrink-0 font-mono uppercase"
+            className="px-3 py-1.5 bg-white text-red-700 hover:bg-red-50 text-xs font-bold rounded-xs shrink-0 font-mono uppercase self-start sm:self-auto"
           >
             Review Evidence Flags ({evidenceList.flatMap((e: any) => e.fraudFlags || []).length})
           </button>
