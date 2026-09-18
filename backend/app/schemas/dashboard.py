@@ -29,11 +29,30 @@ class TopRiskWorkOut(BaseModel):
     category: Optional[str] = None
     stage: str
     sanctionAmount: Optional[float] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     score: float
     priority: str
     confidence: float
     topSignalLabel: str
     districtName: str
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+class MapWorkOut(BaseModel):
+    workId: str
+    externalId: str
+    title: str
+    category: Optional[str] = None
+    stage: str
+    sanctionAmount: Optional[float] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    score: float
+    priority: str
+    districtName: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
 class DashboardSummaryResponse(BaseModel):
     jurisdictionId: Optional[str] = None
@@ -42,3 +61,6 @@ class DashboardSummaryResponse(BaseModel):
     totals: TotalsOut
     riskDistribution: RiskDistributionOut
     topRiskWorks: List[TopRiskWorkOut]
+    mapWorks: List[MapWorkOut] = []
+
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)

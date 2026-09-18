@@ -90,8 +90,8 @@ class DashboardService:
                 "districtName": w.jurisdiction.district_name
             })
 
-        # Map Works Query (All works in scope with coordinates)
-        map_works_all = work_query.filter(Work.latitude.isnot(None), Work.longitude.isnot(None)).all()
+        # Map Works Query (All works in scope for the dashboard)
+        map_works_all = work_query.options(joinedload(Work.jurisdiction)).all()
         map_items = []
         for mw in map_works_all:
             r = db.query(RiskScore).filter(RiskScore.work_id == mw.id).first()
