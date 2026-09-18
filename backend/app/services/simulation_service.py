@@ -46,7 +46,14 @@ class SimulationService:
         fin_score = 0.0
         fin_signals: List[Dict[str, Any]] = []
 
-        if mismatch > 50.0:
+        if mismatch > 70.0:
+            fin_score += 75.0
+            fin_signals.append({
+                "code": "SIM-FIN-001",
+                "severity": "CRITICAL",
+                "message": f"Extreme premature disbursement mismatch: {expenditure_ratio:.1f}% disbursed vs {completion_pct:.1f}% physical progress."
+            })
+        elif mismatch > 50.0:
             fin_score += 45.0
             fin_signals.append({
                 "code": "SIM-FIN-001",
@@ -116,7 +123,14 @@ class SimulationService:
         delay_score = 0.0
         delay_signals: List[Dict[str, Any]] = []
 
-        if slippage > 40.0:
+        if slippage > 60.0:
+            delay_score += 75.0
+            delay_signals.append({
+                "code": "SIM-DELAY-001",
+                "severity": "CRITICAL",
+                "message": f"Extreme progress slippage: {slippage:.1f}% behind timeline schedule ({completion_pct:.1f}% actual vs {expected_prog:.1f}% target)."
+            })
+        elif slippage > 40.0:
             delay_score += 45.0
             delay_signals.append({
                 "code": "SIM-DELAY-001",
@@ -147,8 +161,8 @@ class SimulationService:
                 "message": f"Project is {days_overdue} days past target completion date."
             })
 
-        if days_elapsed > 180 and completion_pct < 15.0 and current_status == "EXECUTION":
-            delay_score += 20.0
+        if days_elapsed > 180 and completion_pct <= 15.0 and current_status == "EXECUTION":
+            delay_score += 25.0
             delay_signals.append({
                 "code": "SIM-DELAY-003",
                 "severity": "MEDIUM",
@@ -275,6 +289,8 @@ class SimulationService:
             id=base_work.id if base_work else None,
             title=base_title,
             category=base_category,
+            agency_id=base_work.agency_id if base_work else None,
+            location_text=base_work.location_text if base_work else None,
             sanction_amount=sim_cost,
             expenditure_amount=sim_expenditure,
             sanction_date=sim_sanction_d,

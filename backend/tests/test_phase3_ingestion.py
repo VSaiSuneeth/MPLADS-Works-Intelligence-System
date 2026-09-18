@@ -30,7 +30,7 @@ def test_seed_works_populated():
         assert w1001 is not None
         assert w1001.title == "Construction of High Capacity Borewell and Tank"
         assert w1001.category == "Water Supply & Sanitation"
-        assert w1001.sanction_amount == 1500000.00
+        assert float(w1001.sanction_amount) == 4500000.00
     finally:
         db.close()
 

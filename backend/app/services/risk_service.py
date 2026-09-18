@@ -73,7 +73,7 @@ class RiskService:
             # Robust z-score calculation
             z_score = abs(cost - median) / (1.4826 * mad + 1e-5)
             if z_score > 3.0:
-                stat_contrib = min(25.0, 10.0 + (z_score - 3.0) * 3.0)
+                stat_contrib = min(30.0, 10.0 + (z_score - 3.0) * 3.0)
                 total_score += stat_contrib
                 signals.append({
                     "code": "STAT-COST-001",

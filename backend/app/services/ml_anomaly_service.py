@@ -76,7 +76,7 @@ class MLAnomalyService:
         feature_dicts = [cls.extract_features(w, db) for w in works]
         feature_matrix = np.array([
             [
-                f["sanction_amount"],
+                float(np.log1p(f["sanction_amount"])),
                 f["disbursement_ratio"],
                 f["progress_pct"],
                 f["delay_days"],
@@ -86,8 +86,8 @@ class MLAnomalyService:
             for f in feature_dicts
         ])
 
-        # If sample size is very small, fit with reduced contamination
-        contamination = min(0.20, max(0.05, 2.0 / len(works))) if len(works) > 1 else 0.1
+        # If sample size is small, fit with tuned contamination to capture top risk outliers
+        contamination = min(0.25, max(0.15, 3.0 / len(works))) if len(works) > 1 else 0.15
 
         clf = IsolationForest(
             n_estimators=50,
@@ -146,7 +146,7 @@ class MLAnomalyService:
         feats = pred_data["features"]
         
         # Contribution to composite risk score (up to 20 pts)
-        contrib = min(20.0, max(5.0, ml_score * 0.20))
+        contrib = min(20.0, max(5.0, ml_score * 0.22))
 
         explanation = (
             f"Isolation Forest ML model flagged multivariate feature anomaly (ML Score: {ml_score:.1f}/100) "

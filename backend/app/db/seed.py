@@ -77,20 +77,26 @@ def seed_demo_evidence(db):
             )
 
     # 1. Delhi Borewell Original Photo (W-1001)
-    delhi_jpeg = make_exif_jpeg(lat=28.8521, lon=77.0934, date_str="2024:05:15 10:30:00", camera="iPhone 15 Pro", color=(120, 180, 220))
-    rel_path_1 = storage_backend.save_file(io.BytesIO(delhi_jpeg), "w1001_delhi_borewell.jpg", subfolder="evidence")
+    delhi_jpeg = make_exif_jpeg(lat=28.6139, lon=77.2090, date_str="2024:05:15 10:30:00", camera="iPhone 15 Pro", color=(120, 180, 220))
+    rel_path_1 = storage_backend.save_file(io.BytesIO(delhi_jpeg), "site_inspection_01.jpg", subfolder="evidence")
     
-    ev1 = db.query(Evidence).filter(Evidence.work_id == w1001.id, Evidence.file_name == "w1001_delhi_borewell.jpg").first()
+    ev1 = db.query(Evidence).filter(Evidence.work_id == w1001.id, Evidence.file_name == "site_inspection_01.jpg").first()
     if not ev1:
         ev1 = Evidence(
             work_id=w1001.id,
-            file_name="w1001_delhi_borewell.jpg",
+            file_name="site_inspection_01.jpg",
             storage_key=rel_path_1,
             evidence_type="PHOTOGRAPH"
         )
         db.add(ev1)
         db.commit()
         db.refresh(ev1)
+    else:
+        ev1.storage_key = rel_path_1
+        ev1.source_url = f"/api/v1/works/{w1001.id}/evidence/{ev1.id}/file"
+        ev1.availability_status = "AVAILABLE"
+        db.commit()
+
     EvidenceFraudService.process_uploaded_evidence(ev1, storage_backend.get_full_path(ev1.storage_key), db)
 
     # 2. Fraudulent Re-upload of same Delhi photo to Lucknow Anganwadi work (W-1009)
